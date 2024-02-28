@@ -1,6 +1,7 @@
 # proxmox-setup
 
 This file will detail the steps needes to setup Proxmox VE.
+Also use the scripts provided by tteck at https://github.com/tteck/Proxmox shoutout to him!
 
 ## host
 
@@ -86,7 +87,6 @@ OnBootSec=120m
 WantedBy=timers.target
 ```
 
-
 Create a new systemd service for Scritiny Spoke ```nano /etc/systemd/system/scrutiny.service```
 Add the following to the service:
 ```
@@ -106,3 +106,77 @@ systemctl enable scrutiny.service
 systemctl enable scrutiny.timer
 systemctl start scrutiny.timer
 ```
+
+### Drive configuration
+
+The drives were passed to the ```[VM-ID]``` using the following command:
+```
+/sbin/qm set [VM-ID] -virtioX /dev/disk/by-uuid/[UUID]
+```
+Where ```[UUID]``` is obtained by running the command:
+
+```
+ls -n /dev/disk/by-uuid/
+```
+This will list all available drives and their ```UUID``` value. This is preffered againced ID property. Remember to change the ```-virtioX``` flag to the coresponding number from 0 to 15.
+
+## TvHeadend
+
+Running inside a LXC based on debian 12. 
+To install TVHeadend run the following:
+```
+apt update
+apt upgrade -y
+apt install curl -y
+bash -c "$(wget -qLO - https://dl.cloudsmith.io/public/tvheadend/tvheadend/setup.deb.sh)"
+apt update  
+apt install tvheadend -y
+```
+While running the mux fetching, it will get stuck at ~30%. In order to fix this, you will need to run the command
+```
+px aux | grep tvheadend
+```
+Notice the pid and corresponding process command. Proceed with killing the process and starting is back up using the correct command (take notice of it in the command above).
+
+In order to use the USB TV Tuner, a few changes need to be done to the .conf file located on the **host**.
+Edit the file located at ```/etc/pve/lxc/ContainerID.conf``` where ```ContainerID``` is the ID of the TvHeadend LXC.
+
+Add the following lines:
+```
+lxc.cgroup2.devices.allow: c 212:* rwm
+lxc.mount.entry: /dev/dvb dev/dvb none bind,optional,create=dir
+lxc.hook.pre-start: sh -c "/bin/chown 100000:100044 -R /dev/dvb"
+```
+For more details see [this Proxmox thread](https://forum.proxmox.com/threads/pass-usb-device-to-lxc.124205).
+
+## Ubuntu Server
+
+Ubuntu Server VM running all Docker containers.
+
+### Drives configuration
+
+The drives were mounted using fstab. MergerFS was used to merge the two 6Tb drives that were passed through and mounted inside the guest VM.
+
+fstab snippet:
+
+```
+# 6Tb media drive
+UUID=5dc2532a-80a6-483e-a679-f092caebe7b5 /mnt/hdd1 ext4 defaults 0 0
+
+# 6Tb media drive
+UUID=9e301c01-633a-4595-bdd8-6fc27a66404b /mnt/hdd2 ext4 defaults 0 0
+
+# MergerFS media pool
+/mnt/hdd1:/mnt/hdd2 /mnt/pool fuse.mergerfs category.create=mfs,cache.files=full,use_ino,nonempty,defaults,allow_other,nofail,minfreespace=20G,moveonenospc=true,fsname=mergerfsPool 0 0
+```
+
+### PBS exclusion
+
+To exclude dirs from PBS: [here](https://pbs.proxmox.com/docs/backup-client.html#excluding-files-directories-from-a-backup)
+Create a file ```.pxarexclude``` near the dir you want to exclude. Add the paths that you want to exclude:
+```
+/models/*
+/ollama/models/*
+```
+
+
