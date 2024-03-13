@@ -190,9 +190,9 @@ Follow the steps presented [above](#Powertop) and adapt as needed.
 Mount the previous backup datastore drive at the same location as before (eg: ```/mnt/datastore/s920-share```).
    
 The mount can be done by editing ```/etc/fstab```, or by adding a new service inside ```/etc/systemd/system```.
-If the initial Directory was created using the PBS GUI, the mount will be done using a service.
+If the initial ```Directory``` was created using the PBS GUI, the mount will be done using a service.
 
-See file ```'mnt-datastore-s920\x2dshare.mount'``` with the following contents:
+Create service ```'mnt-datastore-s920\x2dshare.mount'``` with the following contents:
 ```
 [Install]
 WantedBy=multi-user.target
