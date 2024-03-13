@@ -183,10 +183,9 @@ Create a file ```.pxarexclude``` near the dir you want to exclude. Add the paths
 
 Aftre reinstall, proceed with installing Powertop as presented aboce for PVE.
 
-To restore previous backups from datastore, it will need to be mounted as the same location as before.
-```
-/mnt/datastore/s920-share
-```
+### Mount old backup datastore drive
+Mount the previous backup datastore drive at the same location as before (eg: ```/mnt/datastore/s920-share```).
+   
 The mount can be done by editing ```/etc/fstab```, or by adding a new service inside ```/etc/systemd/system```.
 If the initial Directory was created using the PBS GUI, the mount will be done using a service.
 
@@ -205,13 +204,15 @@ Where=/mnt/datastore/s920-share
 Description=Mount datatstore 's920-share' under '/mnt/datastore/s920-share'
 ```
 
-The seconds step will be to reinitialize the ```/etc/proxmox-backup/datastore.cfg``` with the following content:
+### Restore datastore config
+Initialize the datastore from ```/etc/proxmox-backup/datastore.cfg```:
 ```
 datastore: s920-share
         gc-schedule 09:00
         path /mnt/datastore/s920-share
 ```
-The other files can also be backed-up and restored if needed. They contain configuration for GC, Verify jobs, Prunes etc.
+
+Obs: The other files can also be backed-up and restored if needed. They contain configuration for GC, Verify jobs, Prunes etc.
 
 ## Router configuration
 
