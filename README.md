@@ -181,7 +181,7 @@ Create a file ```.pxarexclude``` near the dir you want to exclude. Add the paths
 
 ## Proxmox Backup Server
 
-Aftre reinstall, proceed with installing Powertop as presented aboce for PVE.
+Aftre reinstall, proceed with installing Powertop as presented [above](#Powertop):
 
 ### Mount old backup datastore drive
 Mount the previous backup datastore drive at the same location as before (eg: ```/mnt/datastore/s920-share```).
@@ -203,6 +203,8 @@ Where=/mnt/datastore/s920-share
 [Unit]
 Description=Mount datatstore 's920-share' under '/mnt/datastore/s920-share'
 ```
+
+Obs: the UUID othe drive can be found using ```ls -n /dev/disk/by-uuid/``` command
 
 ### Restore datastore config
 Initialize the datastore from ```/etc/proxmox-backup/datastore.cfg```:
