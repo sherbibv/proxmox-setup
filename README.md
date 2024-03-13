@@ -179,7 +179,7 @@ Create a file ```.pxarexclude``` near the dir you want to exclude. Add the paths
 /ollama/models/*
 ```
 
-## Proxmox Backup Server
+# Proxmox Backup Server setup
 
 Aftre reinstall, proceed with installing Powertop as presented [above](#Powertop) (adapt as needed). 
 
@@ -216,7 +216,7 @@ datastore: s920-share
 
 Obs: The other files can also be backed-up and restored if needed. They contain configuration for GC, Verify jobs, Prunes etc.
 
-## Router configuration
+# Router setup
 
 TODO
 
