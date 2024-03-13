@@ -179,6 +179,40 @@ Create a file ```.pxarexclude``` near the dir you want to exclude. Add the paths
 /ollama/models/*
 ```
 
+## Proxmox Backup Server
+
+Aftre reinstall, proceed with installing Powertop as presented aboce for PVE.
+
+To restore previous backups from datastore, it will need to be mounted as the same location as before.
+```
+/mnt/datastore/s920-share
+```
+The mount can be done by editing ```/etc/fstab```, or by adding a new service inside ```/etc/systemd/system```.
+If the initial Directory was created using the PBS GUI, the mount will be done using a service.
+
+See file ```'mnt-datastore-s920\x2dshare.mount'``` with the following contents:
+```
+[Install]
+WantedBy=multi-user.target
+
+[Mount]
+Options=defaults
+Type=ext4
+What=/dev/disk/by-uuid/97b995db-ec8c-4eaa-84be-7d04c1bc3c53
+Where=/mnt/datastore/s920-share
+
+[Unit]
+Description=Mount datatstore 's920-share' under '/mnt/datastore/s920-share'
+```
+
+The seconds step will be to reinitialize the ```/etc/proxmox-backup/datastore.cfg``` with the following content:
+```
+datastore: s920-share
+        gc-schedule 09:00
+        path /mnt/datastore/s920-share
+```
+The other files can also be backed-up and restored if needed. They contain configuration for GC, Verify jobs, Prunes etc.
+
 ## Router configuration
 
 TODO
