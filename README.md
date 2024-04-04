@@ -175,6 +175,11 @@ Instalation done using scripts provided by tteck [here](https://tteck.github.io/
 
 ### Update 
 To update version run the scripts provided under vs-server folder inside the container.
+
+```
+bash -c "$(wget -qLO - https://raw.githubusercontent.com/sherbibv/proxmox-setup/main/vs-server/update.sh)"
+```
+
 A reboot is required.
 
 ### PBS exclusion
