@@ -170,6 +170,13 @@ UUID=9e301c01-633a-4595-bdd8-6fc27a66404b /mnt/hdd2 ext4 defaults 0 0
 /mnt/hdd1:/mnt/hdd2 /mnt/pool fuse.mergerfs category.create=mfs,cache.files=full,use_ino,nonempty,defaults,allow_other,nofail,minfreespace=20G,moveonenospc=true,fsname=mergerfsPool 0 0
 ```
 
+## VS Server
+Instalation done using scripts provided by tteck [here](https://tteck.github.io/Proxmox/). 
+
+### Update 
+To update version run the scripts provided under vs-server folder inside the container.
+A reboot is required.
+
 ### PBS exclusion
 
 To exclude dirs from PBS: [here](https://pbs.proxmox.com/docs/backup-client.html#excluding-files-directories-from-a-backup)
