@@ -186,7 +186,7 @@ UUID=9e301c01-633a-4595-bdd8-6fc27a66404b /mnt/hdd2 ext4 defaults 0 0
 Instalation done using scripts provided by tteck [here](https://tteck.github.io/Proxmox/). 
 
 ### Update 
-To update version run the scripts provided under vs-server folder inside the container.
+Run the command below to update VS Server version.
 
 ```
 bash -c "$(wget -qLO - https://raw.githubusercontent.com/sherbibv/proxmox-setup/main/vs-server/update.sh)"
