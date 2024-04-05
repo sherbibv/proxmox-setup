@@ -153,6 +153,18 @@ For more details see [this Proxmox thread](https://forum.proxmox.com/threads/pas
 
 Ubuntu Server VM running all Docker containers.
 
+### MergerFS
+
+To install MergerFS run the following commands:
+
+```
+wget $(curl -s https://api.github.com/repos/trapexit/mergerfs/releases/latest | jq -r ".assets[] | select(.name | test(\"jammy_amd64\")) | .browser_download_url")
+dpkg -i mergerfs_*jammy_amd64.deb
+rm mergerfs_*jammy_amd64.deb
+```
+Obs: using release type ```jammy_amd64```, change this as required.
+
+
 ### Drives configuration
 
 The drives were mounted using fstab. MergerFS was used to merge the two 6Tb drives that were passed through and mounted inside the guest VM.
