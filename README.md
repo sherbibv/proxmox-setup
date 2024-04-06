@@ -21,7 +21,8 @@ Configuring Proxmox Backup Server to easily restore backed-up VMs and CTs
 Installing and configurind Powertop to optimize resource power consumption
 
 1. To install powertop run ```sudo apt-get install -y powertop```
-2. Create a new systemd service that will run powertop after every reboot ```sudo nano /etc/systemd/system/powertop.service```
+2. Create a new systemd service that will run powertop after every reboot
+   ```sudo nano /etc/systemd/system/powertop.service```
 
 ```
 [Unit]
