@@ -210,7 +210,7 @@ After reboot check if IOMMU is enabled
 ```
 dmesg | grep -e DMAR -e IOMMU
 ```
-look for something that says IOMMU enabled and Remapping enabled.
+Look for something that says ```IOMMU enabled``` and ```Remapping enabled```.
 
 Enable Unsafe Interrupts
 ```
@@ -231,7 +231,7 @@ After a reboot check the supported types of your iGPU device (for me the iGPU is
 ls "/sys/bus/pci/devices/0000:00:02.0/mdev_supported_types"
 ```
 In order to passthrough the iGPU to he VM, first stop it.
-Create a new Resource Mapping ```(Datacente```r -> ```Resource Mappings``` -> ```PCIE Device```), and tick the ```Use with Mediated Devices```. The iGPU should appear in the list.
+Create a new Resource Mapping (```Datacente```r -> ```Resource Mappings``` -> ```PCIE Device```), and tick the ```Use with Mediated Devices```. The iGPU should appear in the list.
 After creating the resource mappings, go to the ```VM``` you want to passthrough the iGPU -> ```Hardware``` -> ```Add``` -> ```PCIE Devic```e -> ```Mapped Devices```, and select the igpu resource mapping. Select MDev Type ```i915-GVTg_V5_4```. DO NOT tick ```Primary GPU```.
 
 Start the VM and validate the iGPU is passedthrough correctly by running ```lspci -nnk``` and checkif the device is detected and using the i915 driver.
