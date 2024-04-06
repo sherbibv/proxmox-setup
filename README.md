@@ -182,6 +182,62 @@ UUID=9e301c01-633a-4595-bdd8-6fc27a66404b /mnt/hdd2 ext4 defaults 0 0
 /mnt/hdd1:/mnt/hdd2 /mnt/pool fuse.mergerfs category.create=mfs,cache.files=full,use_ino,nonempty,defaults,allow_other,nofail,minfreespace=20G,moveonenospc=true,fsname=mergerfsPool 0 0
 ```
 
+### iGPU passthrough
+Firstly make sure the hardware supports passthrough and enable IOMMU.
+On the Proxmox VE change the ```/etc/kernel/cmdline``` file to look like this:
+
+```
+root=ZFS=rpool/ROOT/pve-1 boot=zfs **i915.enable_gvt=1 intel_iommu=on**
+```
+
+Also load the following modules in ```/etc/modules```:
+```
+kvmgt
+vfio_pci
+vfio_virqfd
+vfio
+vfio_iommu_type1
+vfio-mdev
+i915
+```
+
+Before rebooting update initramfs:
+```
+update-initramfs -u -k all
+```
+
+After reboot check if IOMMU is enabled
+```
+dmesg | grep -e DMAR -e IOMMU
+```
+look for something that says IOMMU enabled and Remapping enabled.
+
+Enable Unsafe Interrupts
+```
+echo "options vfio_iommu_type1 allow_unsafe_interrupts=1" > "/etc/modprobe.d/iommu.conf"
+```
+Check that device has separate IOMMU group:
+```
+lspci -nnk | grep Intel
+```
+Take note of the Display controller of VGA controller id.
+Run the following command to verify that the iGPU is the only device in a group:
+```
+find /sys/kernel/iommu_groups/ -type l
+```
+
+After a reboot check the supported types of your iGPU device (for me the iGPU is 0000:00:02.0):
+```
+ls "/sys/bus/pci/devices/0000:00:02.0/mdev_supported_types"
+```
+In order to passthrough the iGPU to he VM, first stop it.
+Create a new Resource Mapping ```(Datacente```r -> ```Resource Mappings``` -> ```PCIE Device```), and tick the ```Use with Mediated Devices```. The iGPU should appear in the list.
+After creating the resource mappings, go to the ```VM``` you want to passthrough the iGPU -> ```Hardware``` -> ```Add``` -> ```PCIE Devic```e -> ```Mapped Devices```, and select the igpu resource mapping. Select MDev Type ```i915-GVTg_V5_4```. DO NOT tick ```Primary GPU```.
+
+Start the VM and validate the iGPU is passedthrough correctly by running ```lspci -nnk``` and checkif the device is detected and using the i915 driver.
+
+Optionally, to monitor Intel iGPU install ```intel-gpu-tools``` and ```vainfo``` and use the command ```sudo intel_gpu_top```.
+
 ## VS Server
 Instalation done using scripts provided by tteck [here](https://tteck.github.io/Proxmox/). 
 
