@@ -182,6 +182,21 @@ UUID=9e301c01-633a-4595-bdd8-6fc27a66404b /mnt/hdd2 ext4 defaults 0 0
 /mnt/hdd1:/mnt/hdd2 /mnt/pool fuse.mergerfs category.create=mfs,cache.files=full,use_ino,nonempty,defaults,allow_other,nofail,minfreespace=20G,moveonenospc=true,fsname=mergerfsPool 0 0
 ```
 
+### Expanding root drive
+In order to expand the size of the Ubuntu VM root drive use the following steps:
+
+Locate the root partition by running ```lsblk``` (for me it was sda3). 
+Run ```cfdisk``` and expand your root partition with the available free space (if present after VM disk resize from Proxmox VE GUI + VM reboot) by using the ```Resize``` option.
+
+Resize partition using the command ```pvresize /dev/sda3```.
+
+Next, we will need to get the Logical Volume (LV) path we want to alter using ```sudo lvdisplay```. Note the LV Path value, we will use this in the next command.
+
+Run ```lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv``` that will extend the volume.
+
+Lastly, run ```sudo resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv``` to resize the volume to the desires size.
+
+
 ### iGPU passthrough
 Firstly make sure the hardware supports passthrough and enable IOMMU.
 On the Proxmox VE change the ```/etc/kernel/cmdline``` file to look like this:
