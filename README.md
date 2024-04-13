@@ -182,6 +182,26 @@ UUID=9e301c01-633a-4595-bdd8-6fc27a66404b /mnt/hdd2 ext4 defaults 0 0
 /mnt/hdd1:/mnt/hdd2 /mnt/pool fuse.mergerfs category.create=mfs,cache.files=full,use_ino,nonempty,defaults,allow_other,nofail,minfreespace=20G,moveonenospc=true,fsname=mergerfsPool 0 0
 ```
 
+### SMB drive configuration
+The drives are mounted usinf fstab. For this scenario, SMB server is located ar ```10.69.0.16``` and exposes a share named ```mediaPool```
+
+fstab snippet:
+
+```
+# SMB mergerfs media share
+//10.69.0.16/mediaPool /mnt/cifs/media cifs vers=2.1,gid=1000,uid=1000,iocharset=utf8,credentials=/etc/smbcred 0 0
+```
+Obs: at the moment of writing, Linux Kernel version 5.15.0-102 contains a SMB bug, this is why version 2.1 is used, will revert to version 3.0 after the update.
+
+Notice that the share required a credential file. Before mounting the share, create the smbcred file with the following contents:
+
+```
+username=USER_GOES_HERE
+password=PASS_GOES_HERE
+```
+
+Remember to set the permissions of the file ```chmod 600 /etc/smbcreds```
+
 ### Expanding root drive
 In order to expand the size of the Ubuntu VM root drive use the following steps:
 
