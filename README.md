@@ -267,11 +267,76 @@ ls "/sys/bus/pci/devices/0000:00:02.0/mdev_supported_types"
 ```
 In order to passthrough the iGPU to he VM, first stop it.
 Create a new Resource Mapping (```Datacente```r -> ```Resource Mappings``` -> ```PCIE Device```), and tick the ```Use with Mediated Devices```. The iGPU should appear in the list.
-After creating the resource mappings, go to the ```VM``` you want to passthrough the iGPU -> ```Hardware``` -> ```Add``` -> ```PCIE Devic```e -> ```Mapped Devices```, and select the igpu resource mapping. Select MDev Type ```i915-GVTg_V5_4```. DO NOT tick ```Primary GPU```.
+After creating the resource mappings, go to the ```VM``` you want to passthrough the iGPU -> ```Hardware``` -> ```Add``` -> ```PCIE Device``` -> ```Mapped Devices```, and select the igpu resource mapping. Select MDev Type ```i915-GVTg_V5_4```. DO NOT tick ```Primary GPU```.
 
 Start the VM and validate the iGPU is passedthrough correctly by running ```lspci -nnk``` and checkif the device is detected and using the i915 driver.
 
 Optionally, to monitor Intel iGPU install ```intel-gpu-tools``` and ```vainfo``` and use the command ```sudo intel_gpu_top```.
+
+
+### GPU passthrough
+
+First check if the right kernel drivers for the GPU are being used on the Proxmox VE:
+```
+lspci -v
+```
+Check property ```kernel driver in use``` and if it's anything but ```vfio-pci``` continue with the tutorial.
+
+Instruct the kernel to load the vfio kernel modules by edding ```vfio-pci``` to the ```/etc/modules-load.d/vfio-pci.conf``` file.
+Now instruct the kernel to whick PCIE device to attach the vfio kernel modules.
+To do this we first need to find the GPU devices IDs by using the command:
+```
+lspci -nn | grep -i nvidia
+```
+Obs: the IDs are specified at the end of each line. There should be two devices, one VGA compatible controller and one Audio device. Take note f both IDs.
+
+Eg:
+```
+01:00.0 VGA compatible controller [0300]: NVIDIA Corporation GA106 [GeForce RTX 3060 Lite Hash Rate] [10de:2504] (rev a1)
+01:00.1 Audio device [0403]: NVIDIA Corporation GA106 High Definition Audio Controller [10de:228e] (rev a1)
+```
+
+With the IDs in mind (for me it was 10de:1d81 and 10de:10f2) add the line below to ``` ```:
+```
+options vfio-pci ids=10de:1d81,10de:10f2
+```
+
+Next enable IOMMU groups.
+On the Proxmox VE change the ```/etc/kernel/cmdline``` file to look like this:
+
+```
+root=ZFS=rpool/ROOT/pve-1 boot=zfs **i915.enable_gvt=1 intel_iommu=on**
+```
+Basically, add ```intel_iommu=on``` to the line. For this to work you will need Intel VT-d and IOMMU to be enabled in BIOS.
+
+Finally run ```update-initramfs -u -k all``` and reboot.
+
+After reboot verify the GPU is in the correct kernel drivers by running ```lspci -v``` and checking the GPU ```kernel driver in use``` that should be ```vfio-pci```.
+To check if the GPU is in the correct IOMMU group, run ```find /sys/kernel/iommu_groups/ -type l``` and check if the device IDs are in the same group as the iGPU.
+```
+/sys/kernel/iommu_groups/2/devices/0000:00:01.0
+/sys/kernel/iommu_groups/2/devices/0000:01:00.0
+/sys/kernel/iommu_groups/2/devices/0000:01:00.1
+```
+Host setup is done, now we need to passthrough the GPU to the VM.
+Go to the ```VM``` you want to passthrough the iGPU -> ```Hardware``` -> ```Add``` -> ```PCIE Device``` -> ```Raw device```, and select the GPU from the list. Make sure to check ```All functions``` but keep ```Primary GPU``` unchecked.
+Thats it, continue with instalation of Nvidia drivers on the VM.
+
+First check to see if the GPU got passedthrough successfuly by running ```lspci -v``` and check the ```kernel driver in use``` property. If should be ```nvidia``` but since no Nvidia drivers were installed it's most probably ```nouveau```.
+We need to blacklist this module by adding the following contents to ```/etc/modprobe.d/blacklist-nvidia-nouveau.conf```.
+```
+blacklist nouveau
+options nouveau modset=0
+```
+Run ```update-initramfs -u``` afterwards and reboot.
+Aftre the VM boots up install the Nvidia drivers by running the command and reboot after it's finished:
+```
+apt install nvidia-headless-515-server nvidia-utils-515-server libnvidia-encode-515-server libnvidia-decode-515-server
+```
+After the VM boots up you wan use ```nvidia-smi ``` to see GPU stats.
+Install nvidia-toolkit.
+Obs: ```sudo nvidia-smi -pm ENABLED``` and ```nvidia-persistenced``` helped me lower GPU power draw.
+
 
 ## VS Server
 Instalation done using scripts provided by tteck [here](https://tteck.github.io/Proxmox/). 
