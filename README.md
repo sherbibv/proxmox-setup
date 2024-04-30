@@ -282,7 +282,7 @@ lspci -v
 ```
 Check property ```kernel driver in use``` and if it's anything but ```vfio-pci``` continue with the tutorial.
 
-Instruct the kernel to load the vfio kernel modules by edding ```vfio-pci``` to the ```/etc/modules-load.d/vfio-pci.conf``` file.
+Instruct the kernel to load the vfio kernel modules by adding ```vfio-pci``` to the ```/etc/modules-load.d/vfio-pci.conf``` file.
 Now instruct the kernel to whick PCIE device to attach the vfio kernel modules.
 To do this we first need to find the GPU devices IDs by using the command:
 ```
@@ -296,7 +296,7 @@ Eg:
 01:00.1 Audio device [0403]: NVIDIA Corporation GA106 High Definition Audio Controller [10de:228e] (rev a1)
 ```
 
-With the IDs in mind (for me it was 10de:1d81 and 10de:10f2) add the line below to ``` ```:
+With the IDs in mind (for me it was 10de:1d81 and 10de:10f2) add the line below to ```/etc/modules-load.d/vfio.conf```:
 ```
 options vfio-pci ids=10de:1d81,10de:10f2
 ```
