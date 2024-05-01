@@ -141,7 +141,7 @@ To prevent the card from being used by the sistem add the following two lines in
 options vfio-pci ids=1b21:1166
 softdep ahci pre: vfio-pci
 ```
-Obs: replace 1b21:1166 with your controller id (can be extracted from the command ```lspci -nn```).
+Obs: replace ```1b21:1166``` with your controller id (can be extracted from the command ```lspci -nn```).
 
 Run ```update-initramfs -u -k all``` and reboot.
 
