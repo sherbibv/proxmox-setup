@@ -147,6 +147,8 @@ Run ```update-initramfs -u -k all``` and reboot.
 
 After the reboot you can passthrough the controller to ```OMV VM``` by going to ```Hardware``` -> ```Add``` -> ```PCIE Device``` -> ```Raw device```, and select the SATA Controller from the list.
 
+Reference: [1](https://forum.proxmox.com/threads/pcie-passthrough-of-asmedia-1166-sata-controller.137838/), [2](https://forum.proxmox.com/threads/prevent-a-sata-controller-to-be-loaded-by-ahci.136983/#post-608815), [3](https://forum.proxmox.com/threads/pci-gpu-passthrough-on-proxmox-ve-8-installation-and-configuration.130218/)
+
 ## TvHeadend
 
 Running inside a LXC based on debian 12. 
