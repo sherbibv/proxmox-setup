@@ -107,6 +107,8 @@ systemctl enable scrutiny.timer
 systemctl start scrutiny.timer
 ```
 
+The same steps need to be done inside ```OMV VM``` to that media drives report their SMART metrics to Scrutiny.
+
 ### Drive configuration
 
 The drives were passed to the ```[VM-ID]``` using the following command:
@@ -119,6 +121,31 @@ Where ```[UUID]``` is obtained by running the command:
 ls -n /dev/disk/by-uuid/
 ```
 This will list all available drives and their ```UUID``` value. This is preffered againced ID property. Remember to change the ```-virtioX``` flag to the coresponding number from 0 to 15.
+
+Obs: this is now longer required since the media drives get passedthrough via the ASMedia Technology Inc. ASM1166 Serial ATA Controller.
+
+### ASMedia Technology Inc. ASM1166 Serial ATA Controller Passthrough
+
+To passthrough the controller to ```OMV VM``` the following steps are required.
+
+Edit the boot config (either grub or systemd-boot) and add ```intel_iommu=on iommu=pt``` if missing. In my case it was ```/etc/kernel/cmdline```.
+Ass the following inside ```/etc/modules``` is missing:
+```
+vfio
+vfio_iommu_type1
+vfio_pci
+```
+
+To prevent the card from being used by the sistem add the following two lines inside a new blacklist file ```/etc/modprobe.d/ahci-blacklist.conf```:
+```
+options vfio-pci ids=1b21:1166
+softdep ahci pre: vfio-pci
+```
+Obs: replace 1b21:1166 with your controller id (can be extracted from the command ```lspci -nn```).
+
+Run ```update-initramfs -u -k all``` and reboot.
+
+After the reboot you can passthrough the controller to ```OMV VM``` by going to ```Hardware``` -> ```Add``` -> ```PCIE Device``` -> ```Raw device```, and select the SATA Controller from the list.
 
 ## TvHeadend
 
