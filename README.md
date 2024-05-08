@@ -182,6 +182,13 @@ For more details see [this Proxmox thread](https://forum.proxmox.com/threads/pas
 
 Ubuntu Server VM running all Docker containers.
 
+### Portainer update
+To update Portainer run the command:
+
+```
+sudo bash -c "$(wget -qLO - https://raw.githubusercontent.com/sherbibv/proxmox-setup/main/portainer/update-portainer.sh)"
+```
+
 ### MergerFS
 
 To install MergerFS run the following commands:
