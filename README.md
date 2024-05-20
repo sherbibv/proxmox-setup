@@ -136,12 +136,19 @@ vfio_iommu_type1
 vfio_pci
 ```
 
-To prevent the card from being used by the sistem add the following two lines inside a new blacklist file ```/etc/modprobe.d/ahci-blacklist.conf```:
+To prevent the card from being used by the sistem add the following two lines inside a new blacklist file ```/etc/modprobe.d/vfio.conf```:
 ```
-options vfio-pci ids=1b21:1166
+options vfio-pci ids=1b21:1166,2116:2116
 softdep ahci pre: vfio-pci
 ```
 Obs: replace ```1b21:1166``` with your controller id (can be extracted from the command ```lspci -nn```).
+Note: If the file ```vfio.conf``` exists from iGPU/GPU configurations, add the ids separated by comas in the ids field and ```softdep ahci pre: vfio-pci``` on a new line eg:
+
+```
+options vfio-pci ids=10de:2504,10de:228e,1b21:1166,2116:2116
+softdep ahci pre: vfio-pci
+```
+Here you can see I had my Nvidia GPU configured beforehand.
 
 Run ```update-initramfs -u -k all``` and reboot.
 
@@ -225,9 +232,8 @@ fstab snippet:
 
 ```
 # SMB mergerfs media share
-//10.69.0.16/mediaPool /mnt/cifs/media cifs vers=2.1,gid=1000,uid=1000,iocharset=utf8,credentials=/etc/smbcred 0 0
+//10.69.0.16/mediaPool /mnt/cifs/media cifs vers=3.0,gid=1000,uid=1000,iocharset=utf8,credentials=/etc/smbcred 0 0
 ```
-Obs: at the moment of writing, Linux Kernel version 5.15.0-102 contains a SMB bug, this is why version 2.1 is used, will revert to version 3.0 after the update.
 
 Notice that the share required a credential file. Before mounting the share, create the smbcred file with the following contents:
 
@@ -258,7 +264,7 @@ Firstly make sure the hardware supports passthrough and enable IOMMU.
 On the Proxmox VE change the ```/etc/kernel/cmdline``` file to look like this:
 
 ```
-root=ZFS=rpool/ROOT/pve-1 boot=zfs **i915.enable_gvt=1 intel_iommu=on**
+root=ZFS=rpool/ROOT/pve-1 boot=zfs i915.enable_gvt=1 intel_iommu=on
 ```
 
 Also load the following modules in ```/etc/modules```:
