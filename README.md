@@ -373,8 +373,9 @@ options nouveau modset=0
 Run ```update-initramfs -u``` afterwards and reboot.
 Aftre the VM boots up install the Nvidia drivers by running the command and reboot after it's finished:
 ```
-apt install nvidia-headless-515-server nvidia-utils-515-server libnvidia-encode-515-server libnvidia-decode-515-server
+apt install nvidia-headless-550-server nvidia-utils-550-server libnvidia-encode-550-server libnvidia-decode-550-server
 ```
+ATM version 550 is the latest version - check for updates.
 After the VM boots up you wan use ```nvidia-smi ``` to see GPU stats.
 Install nvidia-toolkit.
 Obs: ```sudo nvidia-smi -pm ENABLED``` and ```nvidia-persistenced``` helped me lower GPU power draw.
