@@ -379,6 +379,7 @@ After the VM boots up you wan use ```nvidia-smi ``` to see GPU stats.
 Install nvidia-toolkit.
 Obs: ```sudo nvidia-smi -pm ENABLED``` and ```nvidia-persistenced``` helped me lower GPU power draw.
 
+To purge drivers use command ```sudo apt purge nvidia* libnvidia*```
 
 ## VS Server
 Instalation done using scripts provided by tteck [here](https://tteck.github.io/Proxmox/). 
