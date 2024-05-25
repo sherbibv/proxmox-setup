@@ -443,6 +443,22 @@ datastore: s920-share
 
 Obs: The other files can also be backed-up and restored if needed. They contain configuration for GC, Verify jobs, Prunes etc.
 
+### Cloud backup
+In order to comply with the 3-2-1 back-up strategy, we should be able to upload out PBS backups to our cloud provider of choice. For this I am going to be using ```rclone``` with Backblaze.
+
+First we install rclone and fuse3 using the commands:
+```
+apt install rclone fuse3
+```
+
+Configure rclone to connect to Backblaze B2
+```
+rclone config
+```
+
+
+TODO
+
 # Router setup
 
 TODO
