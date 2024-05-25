@@ -456,7 +456,10 @@ Configure rclone to connect to Backblaze B2. Here you will have to setup a conne
 rclone config
 ```
 
-After configuration, create a new bucket if you haven't done so already. (Obs: make sure to set the versioning inside Backblaze bucket settings to ot version uploads so that it will delete missing files from the source)
+After configuration, create a new bucket if you haven't done so already.
+
+Obs: make sure to set the versioning inside Backblaze bucket settings to not version uploads so that it will delete missing files from the source on rclone sync.
+
 ```
 rclone mkdir UNIQUE_CONNECTION_NAME:UNIQUE_BUCKET_NAME
 ```
