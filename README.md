@@ -451,13 +451,75 @@ First we install rclone and fuse3 using the commands:
 apt install rclone fuse3
 ```
 
-Configure rclone to connect to Backblaze B2
+Configure rclone to connect to Backblaze B2. Here you will have to setup a connection name for your B2 instance (for me it was ```bz2-pbs-nitro```)
 ```
 rclone config
 ```
 
+After configuration, create a new bucket if you haven't done so already. (Obs: make sure to set the versioning inside Backblaze bucket settings to ot version uploads so that it will delete missing files from the source)
+```
+rclone mkdir UNIQUE_CONNECTION_NAME:UNIQUE_BUCKET_NAME
+```
+Replace ```UNIQUE_CONNECTION_NAME``` with your connection name (for me ```bz2-pbs-nitro```) and ```UNIQUE_BUCKET_NAME``` with the name of the bucket you want to create (in my instance it was ```pbs-nitro```).
+Eg:
+```
+rclone mkdir bz2-pbs-nitro:pbs-nitro
+```
 
-TODO
+In order to backup PBS data, you will need to sync the ```/mnt/datastore``` directory from your PBS machine.
+To setup a job that will periodically sync your PBS backups to Backblaze B2 go to ```/etc/systemd/system``` and a new service and a timer.
+
+```
+nano rclone-sync.service
+```
+
+And add the following lines:
+
+```
+[Unit]
+Description=Rclone Backup Sync Service
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/rclone sync -vv --b2-hard-delete -P /mnt/datastore bz2-pbs-nitro:pbs-nitro
+```
+Obs: replace ```bz2-pbs-nitro:pbs-nitro``` with your details.
+
+Create the timer file 
+```
+nano rclone-sync.timer
+```
+
+And add then lines:
+
+```
+[Unit]
+Description=Run Rclone Backup Sync weekly on Sunday at 9 AM
+
+[Timer]
+OnCalendar=Sun 09:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+```
+
+I've set this up to run every Sunday at 9:00 AM. This can be customized as you see fit.
+
+```
+rclone sync -vv --b2-hard-delete -P --log-file=rclone.txt /mnt/datastore bz2-pbs-nitro:pbs-nitro
+```
+
+Finally, run the following commands to enable the timer.
+
+```
+systemctl daemon-reload
+systemctl enable rclone-sync.timer
+systemctl start rclone-sync.timer
+```
+
+If you checkout your Backblaze bucket you will see files starting to appear. You're all set.
 
 # Router setup
 
