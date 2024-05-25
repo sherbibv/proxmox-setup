@@ -510,10 +510,6 @@ WantedBy=timers.target
 
 I've set this up to run every Sunday at 9:00 AM. This can be customized as you see fit.
 
-```
-rclone sync -vv --b2-hard-delete -P --log-file=rclone.txt /mnt/datastore bz2-pbs-nitro:pbs-nitro
-```
-
 Finally, run the following commands to enable the timer.
 
 ```
