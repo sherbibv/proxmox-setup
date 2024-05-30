@@ -193,8 +193,9 @@ Ubuntu Server VM running all Docker containers.
 To update Portainer run the command:
 
 ```
-sudo bash -c "$(wget -qLO - https://raw.githubusercontent.com/sherbibv/proxmox-setup/main/portainer/update-portainer.sh)"
+sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/sherbibv/proxmox-setup/main/portainer/update-portainer.sh)" -- TAG_TO_PULL
 ```
+Replace ```TAG_TO_PULL``` with the desired version or ommit the ```-- TAG_TO_PULL``` to use ```latest```.
 
 ### MergerFS
 
