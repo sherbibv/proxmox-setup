@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 
-# Use "latest" as the default version tag if none is provided
-VERSION_TAG=${1:-latest}
+# Prompt the user for the version tag
+read -p "Enter the Portainer version tag (default: latest): " VERSION_TAG
+
+# Use "latest" if no input is provided
+VERSION_TAG=${VERSION_TAG:-latest}
 
 echo "Installation started!"
 docker stop portainer
