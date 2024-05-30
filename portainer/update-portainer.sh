@@ -1,20 +1,7 @@
 #!/usr/bin/env bash
 
-# Function to prompt for the version tag
-prompt_version_tag() {
-  read -p "Enter the Portainer version tag (default: latest): " VERSION_TAG
-  VERSION_TAG=${VERSION_TAG:-latest}
-}
-
-# Check if running in an interactive terminal
-if [ -t 0 ]; then
-  prompt_version_tag
-else
-  # If not interactive, force it to be
-  echo "This script needs to run interactively to get user input."
-  exec /bin/bash -i -c "$(declare -f prompt_version_tag); prompt_version_tag; $(<${BASH_SOURCE[0]})"
-  exit
-fi
+# Use "latest" as the default version tag if none is provided
+VERSION_TAG=${1:-latest}
 
 echo "Installation started!"
 docker stop portainer
