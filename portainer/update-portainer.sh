@@ -6,12 +6,14 @@ prompt_version_tag() {
   VERSION_TAG=${VERSION_TAG:-latest}
 }
 
-# Check if running in a terminal to prompt for input
-if [ -t 1 ]; then
+# Check if running in an interactive terminal
+if [ -t 0 ]; then
   prompt_version_tag
 else
-  echo "Error: This script requires interactive input."
-  exit 1
+  # If not interactive, force it to be
+  echo "This script needs to run interactively to get user input."
+  exec /bin/bash -i -c "$(declare -f prompt_version_tag); prompt_version_tag; $(<${BASH_SOURCE[0]})"
+  exit
 fi
 
 echo "Installation started!"
