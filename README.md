@@ -244,7 +244,7 @@ username=USER_GOES_HERE
 password=PASS_GOES_HERE
 ```
 
-Remember to set the permissions of the file ```chmod 600 /etc/smbcreds```
+Remember to set the permissions of the file ```chmod 600 /etc/smbcred```
 
 ### Expanding root drive
 In order to expand the size of the Ubuntu VM root drive use the following steps:
