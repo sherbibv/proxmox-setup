@@ -227,7 +227,8 @@ UUID=9e301c01-633a-4595-bdd8-6fc27a66404b /mnt/hdd2 ext4 defaults 0 0
 ```
 
 ### SMB drive configuration
-The drives are mounted usinf fstab. For this scenario, SMB server is located ar ```10.69.0.16``` and exposes a share named ```mediaPool```
+The drives are mounted using fstab. For this scenario, SMB server is located ar ```10.69.0.16``` and exposes a share named ```mediaPool```.
+If not installed, install cifs-utils ```apt install cifs-utils```.
 
 fstab snippet:
 
