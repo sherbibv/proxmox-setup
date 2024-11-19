@@ -1,0 +1,2 @@
+[proxmox]
+pve1 ansible_host="{{ proxmox_ip }}" ansible_user="{{ proxmox_user }}"

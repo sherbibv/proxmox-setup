@@ -1,0 +1,27 @@
+- name: Configure Powertop
+  hosts: pve1
+  vars_files:
+    - ../vault.yml
+  become: true
+  tasks:
+    - name: Install Powertop
+      apt:
+        name: powertop
+        state: present
+
+    - name: Copy the Powertop service file
+      copy:
+        src: ../files/powertop.service
+        dest: /etc/systemd/system/powertop.service
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Reload systemd
+      command: systemctl daemon-reload
+
+    - name: Enable and start Powertop service
+      systemd:
+        name: powertop.service
+        enabled: true
+        state: started
