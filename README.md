@@ -90,6 +90,9 @@ WantedBy=timers.target
 Create a new systemd service for Scritiny Spoke ```nano /etc/systemd/system/scrutiny.service```
 Add the following to the service:
 ```
+[Install]
+WantedBy=multi-user.target
+
 [Unit]
 Description=Scrutiny job
 
