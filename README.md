@@ -249,6 +249,35 @@ password=PASS_GOES_HERE
 
 Remember to set the permissions of the file ```chmod 600 /etc/smbcred```
 
+### DAS enclosure SMART data fix ###
+If the USB DAS enclosure is not detected by smartctl, some additional steps are required. First we need to see what the ID of the unknown bridge. This can be seen when running ```smartctl -x /dev/sdX``` (replace X with drive letter). The output should look like this:
+```
+$ smartctl -x /dev/sdb
+smartctl 7.2 2020-12-30 r5155 [aarch64-linux-6.1.21-v8+] (local build)
+Copyright (C) 2002-20, Bruce Allen, Christian Franke, www.smartmontools.org
+
+/dev/sdb: Unknown USB bridge [0x5432:0x235c (0x100)]
+Please specify device type with the -d option.
+
+Use smartctl -h to get a usage summary
+```
+
+This shows us that ```0x5432:0x235c``` is the ID of our unknown USB bridge.
+
+With this ID create a new driverdb header file in /etc dir like so: ```nano /etc/smart_drivedb.h``` and add the following:
+
+```
+{ "USB: TERRAMASTER D4-320 4-Bay Enclosure",
+  "0x5432:0x235c",
+  "",
+  "",
+  "-d sat"
+}
+```
+
+The USB name if not important, the critical part is the device type specified with parameter ```-d```.
+This workaround will be required as long as the USB DAS is not added in the smartmemtools headers.
+
 ### Expanding root drive
 In order to expand the size of the Ubuntu VM root drive use the following steps:
 
