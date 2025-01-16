@@ -104,7 +104,10 @@ ExecStart=/opt/scrutiny/bin/scrutiny-collector-metrics-linux-amd64 run --host-id
 Replace ```SCRUTINY_HOST``` and ```SCRUTINY_PORT``` with the corect details for the existing Scrutiny instance. And ```HOST_NAME``` with the name of the machine for better visualization in the Scrutiny WebUI; this is especially important if running multiple machines with the same type of drive.
 To enable service run the following commands in this order: 
 ```
-systemctl daemon-reload && systemctl enable scrutiny.service && systemctl enable scrutiny.timer && systemctl start scrutiny.timer
+systemctl daemon-reload && \
+systemctl enable scrutiny.service && \
+systemctl enable scrutiny.timer && \
+systemctl start scrutiny.timer
 ```
 
 The same steps need to be done inside ```OMV VM``` to that media drives report their SMART metrics to Scrutiny.
