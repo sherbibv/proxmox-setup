@@ -159,6 +159,25 @@ After the reboot you can passthrough the controller to ```OMV VM``` by going to 
 
 Reference: [1](https://forum.proxmox.com/threads/pcie-passthrough-of-asmedia-1166-sata-controller.137838/), [2](https://forum.proxmox.com/threads/prevent-a-sata-controller-to-be-loaded-by-ahci.136983/#post-608815), [3](https://forum.proxmox.com/threads/pci-gpu-passthrough-on-proxmox-ve-8-installation-and-configuration.130218/)
 
+## Newtork stack LXC
+If Traefik is your desired reverse proxy solution, you will need to maintain its log files, both ```traefik.log``` and ```access.log``` because they can grow in size substantially if not under control. To acomplish this you will need to install ```logrotate```.
+Create a new file inside ```/etc/logrotate.d/``` and paste in the following code (make sure to adapt it to your needs:
+
+```
+compress
+REPLACE_WITH_PATH_TO_TRAEFIK_LOGS/*.log {
+  size 5M
+  daily
+  rotate 14
+  missingok
+  notifempty postrotate
+  docker kill --signal="USR1" REPLACE_WITH_TRAEFIK_CONTAINER_NAME
+  endscript
+}
+```
+
+This logrotate configuration manages all log files (*.log) in REPLACE_WITH_PATH_TO_TRAEFIK_LOGS directory, rotating them **daily** or when they reach **5MB**, whichever comes first. It keeps the last 14 rotated logs (**rotate 14**) and compresses old ones to save space (**compress**). If the log file is missing, it avoids errors (**missingok**), and it skips rotation if the file is empty (**notifempty**). After rotation, it sends a USR1 signal to the Traefik Docker container (**docker kill --signal="USR1" REPLACE_WITH_TRAEFIK_CONTAINER_NAME**), instructing Traefik to reopen log files without requiring a restart. 
+
 ## TvHeadend
 
 Running inside a LXC based on debian 12. 
